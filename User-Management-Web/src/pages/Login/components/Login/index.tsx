@@ -7,6 +7,7 @@ import QRCode from 'qrcode.react';
 import { useAppDispatch } from 'modules/store';
 import { login } from 'modules/user';
 import useCountdown from '../../hooks/useCountDown';
+import { accountLogin, IResult } from '../../../../services/login/api';
 
 import Style from './index.module.less';
 
@@ -28,9 +29,27 @@ export default function Login() {
         const formValue = formRef.current?.getFieldsValue?.(true) || {};
         await dispatch(login(formValue));
 
-        MessagePlugin.success('登录成功');
+        // 加入自己的登录验证,判断是否登录成功
+        // if (formValue.account !== 'admin' || formValue.password !== 'admin') {
+        //   throw new Error('账号或密码错误');
+        // } else {
+        //   MessagePlugin.success('登录成功');
+        //   // 登录成功
+        //   navigate('/dashboard/base');
+        // }
 
-        navigate('/dashboard/base');
+        // 账号登录
+        // 打印账号密码
+        console.log('账号: ', formValue.account, '密码:', formValue.password);
+        const result: IResult = await accountLogin({ username: formValue.account, password: formValue.password });
+        if (result.code === 0) {
+          MessagePlugin.success('登录成功');
+          console.log(result);
+          // 登录成功
+          navigate('/dashboard/base');
+        } else {
+          throw new Error('账号或密码错误');
+        }
       } catch (e) {
         console.log(e);
         MessagePlugin.error('登录失败');
