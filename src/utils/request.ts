@@ -6,7 +6,7 @@ import { MessagePlugin, NotificationPlugin } from 'tdesign-react';
 const env = import.meta.env.MODE || 'development';
 const API_HOST = proxy[env].API;
 
-const SUCCESS_CODE = 0;
+// const SUCCESS_CODE = 0;
 const TIMEOUT = 5000;
 export const TOKEN_NAME = 'authorization';
 
@@ -16,7 +16,7 @@ const codeMessage: any = {
   202: '一个请求已经进入后台排队（异步任务）',
   204: '删除数据成功',
   400: '发出的请求有错误，服务器没有进行新建或修改数据的操作',
-  401: '用户没有权限（令牌、用户名、密码错误）',
+  401: '登录过期, 请重新登录',
   403: '用户未得到授权，但是访问是被禁止的',
   404: '访问的资源不存在',
   405: '请求方法不被允许',
@@ -54,21 +54,15 @@ instance.interceptors.response.use(
     return Promise.reject(response);
   }, // 接收异常
   (e) => {
-    const { status, data } = e.response;
-    if (status === 401) {
-      MessagePlugin.info('登录已过期，请重新登录');
-      window.location.href = '/#/login/index';
-      return data;
-    }
-    const errorText = codeMessage[status] || '未知错误';
-    // 右上角错误提示
-    NotificationPlugin.error({
-      title: `[${status}]${errorText}`,
-      // content: JSON.stringify(data.data),
-      // footer: errorText,
-      duration: 3000,
-    });
-    return data;
+    // 构造错误信息
+    const { status } = e.response;
+    const errorText = codeMessage[status];
+
+    return {
+      code: status,
+      message: errorText,
+      data: {},
+    };
   },
 );
 

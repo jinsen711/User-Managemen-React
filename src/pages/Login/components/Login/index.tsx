@@ -1,13 +1,11 @@
 import React, { useState, useRef } from 'react';
-import { useNavigate } from 'react-router-dom';
-import { Form, MessagePlugin, Input, Checkbox, Button, FormInstanceFunctions, SubmitContext } from 'tdesign-react';
+import { Form, Input, Checkbox, Button, FormInstanceFunctions, SubmitContext } from 'tdesign-react';
 import { LockOnIcon, UserIcon, BrowseOffIcon, BrowseIcon, RefreshIcon } from 'tdesign-icons-react';
 import classnames from 'classnames';
 import QRCode from 'qrcode.react';
 import { useAppDispatch } from 'modules/store';
-import { login } from 'modules/user';
+import { login, getUserInfo } from 'modules/user';
 import useCountdown from '../../hooks/useCountDown';
-import { DoLogin, GetUserInfo } from 'services/login/user';
 
 import Style from './index.module.less';
 
@@ -20,28 +18,16 @@ export default function Login() {
   const [showPsw, toggleShowPsw] = useState(false);
   const { countdown, setupCountdown } = useCountdown(60);
   const formRef = useRef<FormInstanceFunctions>();
-  const navigate = useNavigate();
   const dispatch = useAppDispatch();
 
   const onSubmit = async (e: SubmitContext) => {
     if (e.validateResult === true) {
+      // 获取表单值, 即账号密码
       const formValue = formRef.current?.getFieldsValue?.(true) || {};
-      // await dispatch(login(formValue));
-
-      // 账号登录
-      const result: User.ResLogin = await DoLogin(formValue);
-      if (result.code === 0) {
-        console.log(result);
-        // 设置 token
-        // await dispatch(login(result.data.token));
-        MessagePlugin.success(result.message);
-        // 获取当前用户信息
-        // await dispatch(GetUserInfo());
-        // 前往首页
-        navigate('/dashboard/base');
-      } else {
-        MessagePlugin.error(result.message);
-      }
+      // 登录
+      await dispatch(login(formValue));
+      // 获取用户信息
+      await dispatch(getUserInfo());
     }
   };
 
