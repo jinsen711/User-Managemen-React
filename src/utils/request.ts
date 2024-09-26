@@ -1,6 +1,5 @@
 import axios from 'axios';
 import proxy from '../configs/host';
-import { MessagePlugin, NotificationPlugin } from 'tdesign-react';
 
 // 开发接口
 const env = import.meta.env.MODE || 'development';

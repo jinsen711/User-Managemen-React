@@ -1,5 +1,6 @@
 import React, { useState, useRef } from 'react';
-import { Form, Input, Checkbox, Button, FormInstanceFunctions, SubmitContext } from 'tdesign-react';
+import { useNavigate } from 'react-router-dom';
+import { Form, Input, Checkbox, Button, FormInstanceFunctions, SubmitContext, MessagePlugin } from 'tdesign-react';
 import { LockOnIcon, UserIcon, BrowseOffIcon, BrowseIcon, RefreshIcon } from 'tdesign-icons-react';
 import classnames from 'classnames';
 import QRCode from 'qrcode.react';
@@ -18,16 +19,26 @@ export default function Login() {
   const [showPsw, toggleShowPsw] = useState(false);
   const { countdown, setupCountdown } = useCountdown(60);
   const formRef = useRef<FormInstanceFunctions>();
+  const navigate = useNavigate();
   const dispatch = useAppDispatch();
 
   const onSubmit = async (e: SubmitContext) => {
     if (e.validateResult === true) {
-      // 获取表单值, 即账号密码
-      const formValue = formRef.current?.getFieldsValue?.(true) || {};
-      // 登录
-      await dispatch(login(formValue));
-      // 获取用户信息
-      await dispatch(getUserInfo());
+      try {
+        // 获取表单值, 即账号密码
+        const formValue = formRef.current?.getFieldsValue?.(true) || {};
+        // 登录
+        await dispatch(login(formValue));
+        // 获取用户信息
+        await dispatch(getUserInfo());
+
+        navigate('/dashboard/base');
+        MessagePlugin.success('登录成功');
+      } catch (e) {
+        console.log(e);
+
+        MessagePlugin.error('登录失败');
+      }
     }
   };
 

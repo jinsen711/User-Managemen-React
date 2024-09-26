@@ -2,7 +2,6 @@ import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
 import { RootState } from '../store';
 import { DoLogin, GetUserInfo } from 'services/login/user';
 import { TOKEN_NAME } from 'utils/request';
-import { MessagePlugin } from 'tdesign-react';
 
 const namespace = 'user';
 
@@ -16,14 +15,13 @@ export const login = createAsyncThunk(`${namespace}/login`, async (userInfo: Rec
   const mockLogin = async (userInfo: Record<string, unknown>) => {
     // 登录
     const result = await DoLogin(userInfo);
-    console.log('正在登录中..');
     return result;
   };
 
   const res = await mockLogin(userInfo);
   // 如果登录成功，返回token
   if (res.code === 0) {
-    return res.date.token;
+    return res.data.token;
   }
   // 触发 reject
   throw res;
@@ -68,7 +66,8 @@ const userSlice = createSlice({
       .addCase(login.rejected, (state, { error }) => {
         state.token = '';
 
-        MessagePlugin.error(error.message || '登录失败, 未知错误');
+        // MessagePlugin.error(error.message || '登录失败, 未知错误');
+        throw error;
       })
       .addCase(getUserInfo.fulfilled, (state, action) => {
         state.userInfo = action.payload;
@@ -76,7 +75,8 @@ const userSlice = createSlice({
       .addCase(getUserInfo.rejected, (state, { error }) => {
         state.userInfo = {};
 
-        MessagePlugin.error(error.message || '获取用户信息失败, 未知错误');
+        // MessagePlugin.error(error.message || '获取用户信息失败, 未知错误');
+        throw error;
       });
   },
 });
