@@ -37,7 +37,8 @@ export default function Login() {
       } catch (e: any) {
         console.log(e);
 
-        MessagePlugin.error(e.message || '登录失败');
+        // MessagePlugin.error(e.message || '登录失败');
+        MessagePlugin.error('登录失败');
       }
     }
   };
