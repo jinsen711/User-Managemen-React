@@ -7,7 +7,7 @@ const namespace = 'user';
 
 const initialState = {
   token: localStorage.getItem(TOKEN_NAME) || 'main_token', // 默认token不走权限
-  userInfo: {},
+  userInfo: {} as User.UserInfo,
 };
 
 // login
@@ -50,7 +50,7 @@ const userSlice = createSlice({
     logout: (state) => {
       localStorage.removeItem(TOKEN_NAME);
       state.token = '';
-      state.userInfo = {};
+      state.userInfo = {} as User.UserInfo;
     },
     remove: (state) => {
       state.token = '';
@@ -73,7 +73,7 @@ const userSlice = createSlice({
         state.userInfo = action.payload;
       })
       .addCase(getUserInfo.rejected, (state, { error }) => {
-        state.userInfo = {};
+        state.userInfo = {} as User.UserInfo;
 
         // MessagePlugin.error(error.message || '获取用户信息失败, 未知错误');
         throw error;
@@ -81,7 +81,7 @@ const userSlice = createSlice({
   },
 });
 
-export const selectListBase = (state: RootState) => state.listBase;
+export const UserData = (state: RootState) => state.user;
 
 export const { logout, remove } = userSlice.actions;
 

@@ -10,9 +10,9 @@ import {
   PoweroffIcon,
   UserCircleIcon,
 } from 'tdesign-icons-react';
-import { useAppDispatch } from 'modules/store';
+import { useAppDispatch, useAppSelector } from 'modules/store';
 import { toggleSetting } from 'modules/global';
-import { logout } from 'modules/user';
+import { logout, UserData } from 'modules/user';
 import Style from './HeaderIcon.module.less';
 
 const { DropdownMenu, DropdownItem } = Dropdown;
@@ -20,6 +20,9 @@ const { DropdownMenu, DropdownItem } = Dropdown;
 export default memo(() => {
   const dispatch = useAppDispatch();
   const navigate = useNavigate();
+
+  // 获取用户信息
+  const { userInfo } = useAppSelector(UserData);
 
   const gotoWiki = () => {
     window.open('https://tdesign.tencent.com/react/overview');
@@ -67,7 +70,7 @@ export default memo(() => {
       <Dropdown trigger={'click'} onClick={clickHandler}>
         <Button variant='text' className={Style.dropdown}>
           <Icon name='user-circle' className={Style.icon} />
-          <span className={Style.text}>Tencent</span>
+          <span className={Style.text}>{userInfo.username || '未登录'}</span>
           <Icon name='chevron-down' className={Style.icon} />
         </Button>
         <DropdownMenu>
