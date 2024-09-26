@@ -34,10 +34,10 @@ export default function Login() {
 
         navigate('/dashboard/base');
         MessagePlugin.success('登录成功');
-      } catch (e) {
+      } catch (e: any) {
         console.log(e);
 
-        MessagePlugin.error('登录失败');
+        MessagePlugin.error(e.message || '登录失败');
       }
     }
   };
